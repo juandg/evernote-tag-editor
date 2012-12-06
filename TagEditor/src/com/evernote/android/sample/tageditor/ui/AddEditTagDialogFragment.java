@@ -31,6 +31,9 @@ import com.evernote.edam.type.Tag;
  */
 public class AddEditTagDialogFragment extends DialogFragment implements OnItemSelectedListener {
 
+	// tag to retrieve this fragment on the FragmentManager
+	public static final String ADD_EDIT_FRAGMENT_TAG = "add_edit_tag";
+	
 	// Constants to name the expected Fragment arguments
 	public static final String NAME_BUNDLE_KEY = "name";
 	public static final String GUID_BUNDLE_KEY = "guid";

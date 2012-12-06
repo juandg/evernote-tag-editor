@@ -6,6 +6,9 @@ import org.apache.thrift.transport.TTransportException;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.evernote.android.sample.tageditor.data.TagsDb;
@@ -83,14 +86,19 @@ public class TagSyncService extends IntentService {
 				return;
 
 			Client noteStore = null;
-
 			String action = "";
+			Intent responseIntent = new Intent();
+
 
 			try {
 				// Create an Evernote Note Store to perform actions on the Tags
 				noteStore = mEvernoteSession.createNoteStore();
 			} catch (TTransportException e) {
 				Log.e(TAG, "Can't get noteStore", e);
+				responseIntent.putExtra(EXTRA_CURRENT_TASK, currentTask);
+				action = ACTION_FAILED;
+				responseIntent.setAction(action);
+				sendBroadcast(responseIntent);
 			}
 			switch(currentTask) {
 			case SYNC:
@@ -188,9 +196,9 @@ public class TagSyncService extends IntentService {
 			// if there's no action to report we don't send a broadcast
 			if(!action.equalsIgnoreCase("")) {
 				// If there's an action, we send a broadcast that gets captured by our main activity
-				Intent i = new Intent(action);
-				i.putExtra(EXTRA_CURRENT_TASK, currentTask);
-				sendBroadcast(i);
+				responseIntent.setAction(action);
+				responseIntent.putExtra(EXTRA_CURRENT_TASK, currentTask);
+				sendBroadcast(responseIntent);
 			}
 		}
 	}

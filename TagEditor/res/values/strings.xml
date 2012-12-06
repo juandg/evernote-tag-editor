@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Evernote Tag Editor</string>
+    	<string name="ok">OK</string>
+	<string name="cancel">Cancel</string>
+	<string name="add_title">Add Tag</string>
+	<string name="edit_title">Edit Tag</string>
+	<string name="tag_name">Tag Name:</string>
+	<string name="tag_parent">Tag Parent:</string>
+    <string name="update_tags">Update</string>
+    <string name="add_tag">Add</string>
+    <string name="menu_settings">Settings</string>
+
+</resources>

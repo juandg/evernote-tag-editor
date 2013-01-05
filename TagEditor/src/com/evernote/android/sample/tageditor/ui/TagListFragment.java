@@ -201,9 +201,10 @@ public class TagListFragment extends ListFragment {
 			options.append(getResources().getString(R.string.action_edit));
 			options.append(",");
 			options.append(getResources().getString(R.string.action_delete));
-			if(argBundle.getBoolean(HAS_CHILDREN_BUNDLE_KEY))
+			if(argBundle.getBoolean(HAS_CHILDREN_BUNDLE_KEY)) {
 				options.append(",");
-			options.append(getResources().getString(R.string.action_view));
+				options.append(getResources().getString(R.string.action_view));
+			}
 			// and set the main attributes of the dialog
 			builder.setTitle(getResources().getString(R.string.action_prompt))
 			.setItems(options.toString().split(","), new DialogInterface.OnClickListener() {

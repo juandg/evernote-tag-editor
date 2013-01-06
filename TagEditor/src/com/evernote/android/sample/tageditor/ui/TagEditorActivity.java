@@ -1,13 +1,7 @@
 package com.evernote.android.sample.tageditor.ui;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.app.*;
+import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,6 +44,7 @@ ActionBar.OnNavigationListener {
 
 	// Used to interact with the Evernote web service
 	private EvernoteSession mEvernoteSession;
+
 
 	/**
 	 * BroadcastReceiver that "listens" for intents from our sync service and performs
@@ -100,8 +95,9 @@ ActionBar.OnNavigationListener {
 	};
 
 	public static final String LIST_FRAGMENT_TAG = "tagList";
+    private boolean OAuthFailed = false;
 
-	/** Called when the activity is first created. */
+    /** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -121,21 +117,27 @@ ActionBar.OnNavigationListener {
 		.replace(R.id.container, fragment, LIST_FRAGMENT_TAG ).commit();
 	}
 
-	/** Called when the activity is called to the foreground. */
-	@Override
-	public void onResume() {
-		super.onResume();
-		// Open a DB connetion
-		TagsDb.INSTANCE.open(getApplicationContext());
-		// register broad cast receiver
-		registerReceivers();
-		if (!mEvernoteSession.isLoggedIn()) {
-			startAuth();
-		} else {
-			startListFragment();
-			updateUi();
-		}	
-	}
+    /** Called when the activity is called to the foreground. */
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Open a DB connetion
+        TagsDb.INSTANCE.open(getApplicationContext());
+        // register broad cast receiver
+        registerReceivers();
+
+        if(OAuthFailed)    {
+            OAuthFailedDialogFragment newFragment = new OAuthFailedDialogFragment();
+            newFragment.show(getFragmentManager(), "OAuthFailed");
+        } else {
+            if (!mEvernoteSession.isLoggedIn()) {
+                startAuth();
+            } else {
+                startListFragment();
+                updateUi();
+            }
+        }
+    }
 
 	/** Register intent filters to listen for responses from the sync service */
 	private void registerReceivers() {
@@ -207,7 +209,7 @@ ActionBar.OnNavigationListener {
 		if (mEvernoteSession.isLoggedIn())
 			logOut();
 		try {
-			mEvernoteSession.authenticate(this.getApplicationContext());
+			mEvernoteSession.authenticate(this);
 		} catch (Exception e) {
 			Log.e(TAG, "Can't authenticate", e);
 			Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -236,10 +238,31 @@ ActionBar.OnNavigationListener {
 		case EvernoteSession.REQUEST_CODE_OAUTH:
 			if(resultCode == Activity.RESULT_OK) {
 				updateUi();
-			}
+			} else OAuthFailed = true;
 			break;
 		}
 	}
+
+    public class OAuthFailedDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.oauth_failed_text)
+                    .setPositiveButton(R.string.oauth_failed_retry, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startAuth();
+                        }
+                    })
+                    .setNegativeButton(R.string.oauth_failed_exit, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            getActivity().finish();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
 
 	/**
 	 * Creates the two action bar buttons
@@ -335,7 +358,7 @@ ActionBar.OnNavigationListener {
 						return false;
 					}
 				}
-				// ifit's a new user, we call Evernote to get the new tags
+				// if it's a new user, we call Evernote to get the new tags
 				Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 				edit.putString("username", username);
 				edit.commit();	

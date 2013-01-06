@@ -2,7 +2,6 @@ package com.evernote.android.sample.tageditor.service;
 
 import java.util.List;
 
-import org.apache.thrift.transport.TTransportException;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import com.evernote.android.sample.tageditor.utils.TagEditorUtil;
 import com.evernote.client.oauth.android.EvernoteSession;
 import com.evernote.edam.notestore.NoteStore.Client;
 import com.evernote.edam.type.Tag;
+import com.evernote.thrift.transport.TTransportException;
 
 /**
  * Sync service that handles all the communication with the Evernote API

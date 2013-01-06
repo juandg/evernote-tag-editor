@@ -19,5 +19,9 @@
     <string name="action_view">View Tags</string>
     
     <string name="action_prompt">Select an action</string>
+    
+    <string name="oauth_failed_text">Authentication with the Evernote Service failed. Do you wish to retry?</string>
+    <string name="oauth_failed_retry">Yes</string>
+    <string name="oauth_failed_exit">Exit</string>
 
 </resources>

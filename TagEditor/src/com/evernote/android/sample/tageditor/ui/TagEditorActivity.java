@@ -44,6 +44,7 @@ ActionBar.OnNavigationListener {
 
 	// Used to interact with the Evernote web service
 	private EvernoteSession mEvernoteSession;
+	
 
 
 	/**
@@ -223,7 +224,7 @@ ActionBar.OnNavigationListener {
 		mEvernoteSession.logOut(getApplicationContext());
 		Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 		edit.putString("username", "");
-		edit.commit();	
+		edit.apply();	
 	}
 
 	/**
@@ -249,14 +250,14 @@ ActionBar.OnNavigationListener {
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.oauth_failed_text)
-                    .setPositiveButton(R.string.oauth_failed_retry, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startAuth();
-                        }
-                    })
                     .setNegativeButton(R.string.oauth_failed_exit, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             getActivity().finish();
+                        }
+                    })
+                    .setPositiveButton(R.string.oauth_failed_retry, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startAuth();
                         }
                     });
             // Create the AlertDialog object and return it
@@ -321,7 +322,7 @@ ActionBar.OnNavigationListener {
 			i.putExtra(TagSyncService.EXTRA_CURRENT_TASK, TagSyncService.Task.SYNC);
 			setProgressBarIndeterminateVisibility(true); 
 			Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-			edit.commit();
+			edit.apply();
 			startService(i);
 			break;
 		}
@@ -361,7 +362,7 @@ ActionBar.OnNavigationListener {
 				// if it's a new user, we call Evernote to get the new tags
 				Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 				edit.putString("username", username);
-				edit.commit();	
+				edit.apply();	
 
 				Intent i = new Intent(TagEditorActivity.this, TagSyncService.class);
 				i.putExtra(TagSyncService.EXTRA_CURRENT_TASK, TagSyncService.Task.SYNC);

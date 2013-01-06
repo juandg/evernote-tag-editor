@@ -1,20 +1,31 @@
 package com.evernote.android.sample.tageditor.ui;
 
-import android.app.*;
-import android.content.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.evernote.android.sample.tageditor.R;
 import com.evernote.android.sample.tageditor.data.TagsDb;
 import com.evernote.android.sample.tageditor.service.TagSyncService;
@@ -35,7 +46,7 @@ import com.evernote.client.oauth.android.EvernoteSession;
  * @since December 2, 2012
  * 
  */
-public class TagEditorActivity extends Activity implements
+public class TagEditorActivity extends SherlockFragmentActivity implements
 ActionBar.OnNavigationListener {
 
 	private static final int NAVIGATION_SIGN_OUT = 1;
@@ -59,7 +70,7 @@ ActionBar.OnNavigationListener {
 		public void onReceive(Context context, Intent intent) {
 			// If the list fragment is active, we inform it of the changes, 
 			// if not, we create the fragment 
-			TagListFragment fragment = (TagListFragment) getFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+			TagListFragment fragment = (TagListFragment) getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
 			if(fragment == null) {
 				startListFragment();
 			} else {
@@ -115,7 +126,7 @@ ActionBar.OnNavigationListener {
 	/** We call this to start the List fragment. */
 	private void startListFragment() {
 		Fragment fragment = new TagListFragment();
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 		.replace(R.id.container, fragment, LIST_FRAGMENT_TAG ).commit();
 	}
 
@@ -130,7 +141,7 @@ ActionBar.OnNavigationListener {
 
         if(OAuthFailed)    {
             OAuthFailedDialogFragment newFragment = new OAuthFailedDialogFragment();
-            newFragment.show(getFragmentManager(), "OAuthFailed");
+            newFragment.show(getSupportFragmentManager(), "OAuthFailed");
         } else {
             if (!mEvernoteSession.isLoggedIn()) {
                 startAuth();
@@ -189,7 +200,7 @@ ActionBar.OnNavigationListener {
 	 */
 	private void initializeActionBar(String saved_username) {
 		// Set up the action bar to show a dropdown list.
-		final ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
@@ -272,7 +283,7 @@ ActionBar.OnNavigationListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_tag_editor, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_tag_editor, menu);
 		return true;
 	}
 
@@ -285,7 +296,7 @@ ActionBar.OnNavigationListener {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			TagListFragment listFragment = (TagListFragment) getFragmentManager().findFragmentByTag(TagEditorActivity.LIST_FRAGMENT_TAG);
+			TagListFragment listFragment = (TagListFragment) getSupportFragmentManager().findFragmentByTag(TagEditorActivity.LIST_FRAGMENT_TAG);
 			if(!listFragment.isTopLevelList()) {
 				listFragment.onHeaderClick();
 				return true;
@@ -307,7 +318,7 @@ ActionBar.OnNavigationListener {
 			// pass it an arguments bundle with all the needed info
 			Bundle argBundle = new Bundle();
 			argBundle.putBoolean(AddEditTagDialogFragment.EDIT_BUNDLE_KEY, false);
-			TagListFragment listFragment = (TagListFragment) getFragmentManager().findFragmentByTag(TagEditorActivity.LIST_FRAGMENT_TAG);
+			TagListFragment listFragment = (TagListFragment) getSupportFragmentManager().findFragmentByTag(TagEditorActivity.LIST_FRAGMENT_TAG);
 			// ask the fragment if we're on the main list or seeing a list of sub tags
 			// froma parent tag
 			if(!listFragment.isTopLevelList())
@@ -315,7 +326,7 @@ ActionBar.OnNavigationListener {
 				// gets added to the parent currently in view
 				argBundle.putString(AddEditTagDialogFragment.PARENT_GUID_BUNDLE_KEY, listFragment.getCurrentTagGuid());
 			newFragment.setArguments(argBundle);
-			newFragment.show(getFragmentManager(), AddEditTagDialogFragment.ADD_EDIT_FRAGMENT_TAG);
+			newFragment.show(getSupportFragmentManager(), AddEditTagDialogFragment.ADD_EDIT_FRAGMENT_TAG);
 			break;
 		case R.id.update:
 			// If the user selects the sync button, we call the sync service directly

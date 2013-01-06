@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.evernote.edam.type.Tag;
@@ -165,7 +166,7 @@ public enum TagsDb {
 
 		// if a parent guid was specified we add that tag first so that it 
 		// displays first on the spinner
-		if ("".equalsIgnoreCase(parentGuid)) {
+		if (TextUtils.isEmpty(parentGuid)) {
 			all.add(0, emptyTag);
 		} else {
 			all.add(0, parentTag);

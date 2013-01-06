@@ -6,6 +6,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -90,7 +91,7 @@ ActionBar.OnNavigationListener {
 				break;
 
 			}
-			if(!toastText.equalsIgnoreCase(""))
+			if(!TextUtils.isEmpty(toastText))
 				Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();
 		}
 	};
@@ -175,7 +176,7 @@ ActionBar.OnNavigationListener {
 				saved_username  = sp.getString("username", "");
 			}
 
-			if (saved_username.equalsIgnoreCase("")) {
+			if (TextUtils.isEmpty(saved_username)) {
 				new EvernoteSyncUser().execute();
 			} else {
 				initializeActionBar(saved_username);

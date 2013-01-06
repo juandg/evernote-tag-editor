@@ -6,6 +6,7 @@ import org.apache.thrift.transport.TTransportException;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.evernote.android.sample.tageditor.data.TagsDb;
@@ -191,7 +192,7 @@ public class TagSyncService extends IntentService {
 				break;
 			}
 			// if there's no action to report we don't send a broadcast
-			if(!action.equalsIgnoreCase("")) {
+			if(!TextUtils.isEmpty(action)) {
 				// If there's an action, we send a broadcast that gets captured by our main activity
 				responseIntent.setAction(action);
 				responseIntent.putExtra(EXTRA_CURRENT_TASK, currentTask);

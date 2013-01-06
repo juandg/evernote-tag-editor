@@ -16,7 +16,7 @@
     
     <string name="action_edit">Edit Tag</string>
     <string name="action_delete">Delete Tag</string>
-    <string name="action_view">View Tags</string>
+    <string name="action_view">View Child Tags</string>
     
     <string name="action_prompt">Select an action</string>
     
